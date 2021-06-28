@@ -12,6 +12,13 @@ app.use(json())
 app.use(urlencoded({ extended: true }))
 app.use(morgan('dev'))
 
+// Custom middleware
+const log = (req, res, next) => {
+    console.log("logging")
+    req.mydata = "123"
+    next()
+}
+
 // app.get("/", (req, res) => {
 //     res.send({ message: "hello"})
 // })
@@ -21,11 +28,14 @@ app.use(morgan('dev'))
 //     res.send({message: "ok"})
 // })
 
-app.get("/data", (req, res) => {
-    res.send({ message: "hello" })
+// pass log midleware to route
+app.get("/data", log, (req, res) => {
+
+    res.send({ message: req.mydata })
 })
 
-app.post("/data", (req, res) => {
+// pass array of middlewares to route
+app.post("/data", [log, log, log], (req, res) => {
     res.send(req.body)
 })
 
