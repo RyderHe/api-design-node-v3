@@ -4,6 +4,7 @@ import morgan from 'morgan'
 import cors from 'cors'
 
 export const app = express()
+const router = express.Router()
 
 app.disable('x-powered-by')
 
@@ -11,6 +12,26 @@ app.use(cors())
 app.use(json())
 app.use(urlencoded({ extended: true }))
 app.use(morgan('dev'))
+
+// // cats
+// const routes = ["get /cat", "get /cat/:id", "post /cat", "put /cat/:id", "delete /cat/:id"]
+
+// router.route("/cat")
+// .get()
+// .post()
+
+// router.router("/cat/:id")
+// .get()
+// .put()
+// .delete()
+
+// Router and SubRouters
+router.get('/me', (req, res) => {
+    console.log('here')
+    res.send({ me: 'hello' })
+})
+
+app.use("/api", router)
 
 // Custom middleware
 const log = (req, res, next) => {
@@ -29,14 +50,22 @@ const log = (req, res, next) => {
 // })
 
 // pass log midleware to route
-app.get("/data", log, (req, res) => {
+app.get("/data", log, (req, res) => { // exact match
 
     res.send({ message: req.mydata })
 })
 
 // pass array of middlewares to route
-app.post("/data", [log, log, log], (req, res) => {
+app.post("/data", [log, log, log], (req, res) => { // exact match
     res.send(req.body)
+})
+
+app.get("/user/*", (req, res) => {
+    res.send("glob")
+})
+
+app.get("/:id", (req, res) => {
+    res.send("parameter")
 })
 
 export const start = () => {
